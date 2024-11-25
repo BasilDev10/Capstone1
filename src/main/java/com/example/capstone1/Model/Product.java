@@ -21,4 +21,12 @@ public class Product {
     private double price;
     @NotEmpty(message = "Error: categoryId is empty")
     private String categoryId;
+    @NotEmpty(message = "Error: coupon is empty")
+    @Size(min = 4 , message = "Error: coupon length is more then 4")
+    private String coupon;
+    @NotNull(message = "Error: couponDiscountPercentage is null")
+    @Positive(message = "Error: couponDiscountPercentage is must be positive")
+    private int couponDiscountPercentage;
+    @NotNull(message = "Error: applyCoupon is null")
+    private boolean applyCoupon;
 }

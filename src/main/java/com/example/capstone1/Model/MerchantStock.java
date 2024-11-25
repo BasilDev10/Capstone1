@@ -1,9 +1,6 @@
 package com.example.capstone1.Model;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -21,4 +18,5 @@ public class MerchantStock {
     @Positive(message = "Error: stock must be positive")
     @Min(value = 10 , message = "Error: stock must be at least 10 at start")
     private int stock;
+
 }

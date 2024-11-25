@@ -25,8 +25,8 @@ public class ProductController {
     public ResponseEntity addProduct(@RequestBody @Valid Product product , Errors errors){
         if(errors.hasErrors()) return ResponseEntity.status(400).body(new ApiResponse(errors.getFieldError().getDefaultMessage()));
 
-        productService.addProduct(product);
-        return ResponseEntity.ok(new ApiResponse("Product is added"));
+        if (productService.addProduct(product)) return ResponseEntity.ok(new ApiResponse("product is added"));
+        else return ResponseEntity.status(400).body(new ApiResponse("Error : categoryId ("+product.getCategoryId()+") not found"));
     }
 
     @PutMapping("/update/{id}")

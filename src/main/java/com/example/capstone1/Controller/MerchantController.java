@@ -1,9 +1,13 @@
 package com.example.capstone1.Controller;
 
+import com.example.capstone1.ApiResponse.ApiResponse;
+import com.example.capstone1.Model.Merchant;
 import com.example.capstone1.Service.MerchantService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/merchant")
@@ -13,4 +17,33 @@ public class MerchantController {
     private final MerchantService merchantService;
 
 
+
+    @GetMapping("/get")
+    public ResponseEntity getMerchant(){
+        return ResponseEntity.ok(merchantService.getAllMerchants());
+    }
+
+    @PostMapping("/add")
+    public ResponseEntity addMerchant(@RequestBody @Valid Merchant merchant , Errors errors){
+        if(errors.hasErrors()) return ResponseEntity.status(400).body(new ApiResponse(errors.getFieldError().getDefaultMessage()));
+
+        merchantService.addMerchant(merchant);
+        return ResponseEntity.status(201).body(new ApiResponse("Merchant is added"));
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity updateMerchant(@PathVariable String id, @RequestBody @Valid Merchant merchant , Errors errors){
+        if(errors.hasErrors()) return ResponseEntity.status(400).body(new ApiResponse(errors.getFieldError().getDefaultMessage()));
+
+        if(merchantService.updateMerchant(id,merchant)) return ResponseEntity.ok(new ApiResponse("Merchant is updated"));
+        else return ResponseEntity.status(400).body(new ApiResponse("Merchant not found"));
+    }
+
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity updateMerchant(@PathVariable String id){
+
+        if(merchantService.deleteMerchant(id)) return ResponseEntity.ok(new ApiResponse("Merchant is deleted"));
+        else return ResponseEntity.status(400).body(new ApiResponse("Merchant not found"));
+    }
 }
