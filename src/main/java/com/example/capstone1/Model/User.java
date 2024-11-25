@@ -26,6 +26,6 @@ public class User {
     @Pattern(regexp = "Admin|Customer" , message = "Error: role only accept Admin or Customer")
     private String role;
     @NotNull(message = "Error: balance is null")
-    @Positive(message = "Error: balance must be positive")
+    @PositiveOrZero(message = "Error: balance must be positive or zero")
     private double balance;
 }

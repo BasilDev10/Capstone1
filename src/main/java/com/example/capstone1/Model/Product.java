@@ -1,9 +1,6 @@
 package com.example.capstone1.Model;
 
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -24,8 +21,9 @@ public class Product {
     @NotEmpty(message = "Error: coupon is empty")
     @Size(min = 4 , message = "Error: coupon length is more then 4")
     private String coupon;
-    @NotNull(message = "Error: couponDiscountPercentage is null")
-    @Positive(message = "Error: couponDiscountPercentage is must be positive")
+    @NotNull(message = "Error: coupon Discount Percentage is null")
+    @PositiveOrZero(message = "Error: coupon Discount Percentage is must be positive or zero")
+    @Max(value = 100, message = "Error: coupon Discount Percentage the max is 100")
     private int couponDiscountPercentage;
     @NotNull(message = "Error: applyCoupon is null")
     private boolean applyCoupon;

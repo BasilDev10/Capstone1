@@ -87,16 +87,12 @@ public class MerchantStockService {
 
     public String addMerchantStockToProduct(String productId,String merchantId , int stock){
 
-        MerchantStock merchantStock = null;
-
         if (productService.getProductById(productId) == null) return "Error: productId ("+productId+") not found ";
-        else if(merchantService.getMerchantById(merchantId) == null) return "Error: merchantId ("+merchantId+") not found ";
-        else if(getMerchantStockById(merchantStock.getProductId() , merchantStock.getMerchantId()) != null) return "Error : duplicated merchant stock";
+        if(merchantService.getMerchantById(merchantId) == null) return "Error: merchantId ("+merchantId+") not found ";
+
+        if(getMerchantStockById(productId , merchantId) != null) return "Error : duplicated merchant stock";
         else {
-            merchantStock.setId("MS"+merchantStockCounter);
-            merchantStock.setProductId(productId);
-            merchantStock.setMerchantId(merchantId);
-            merchantStock.setStock(stock);
+            MerchantStock merchantStock = new MerchantStock("MS"+merchantStockCounter,productId,merchantId,stock);
             merchantStockCounter++;
             merchantStocks.add(merchantStock);
             return "added";
@@ -138,6 +134,36 @@ public class MerchantStockService {
         }
     }
 
+
+    public String userBuyProduct(String userId,String productId , String merchantId , String coupon){
+        MerchantStock merchantStock = getMerchantStockById(productId,merchantId);
+        User user = userService.getByUserId(userId);
+        Product product = productService.getProductById(productId);
+        Merchant merchant = merchantService.getMerchantById(merchantId);
+
+        if(merchantStock == null )return "Error: Merchant stock with productId ("+productId+") and merchantId ("+merchantId+")  not found";
+        else if ( user == null) return "Error: userId ("+userId+") not found";
+        else if(product == null) return "Error: productId ("+productId+") not found";
+        else if(merchant == null ) return  "Error: merchantId ("+merchantId+") not found";
+        else if(merchantStock.getStock() <= 0) return "Error: product is out of stock";
+        else if( product.isApplyCoupon() == false) return "Error: this product does not apply coupon";
+        else if (!product.getCoupon().equalsIgnoreCase(coupon)) return "Error: coupon is wrong";
+        else if(product.getCouponDiscountPercentage() == 0) return "Error: coupon discount percentage is 0";
+
+        double price = product.getPrice();
+        double couponDiscountPercentage = (double) product.getCouponDiscountPercentage() / 100;
+        double amount = price -(price * couponDiscountPercentage);
+
+        if (user.getBalance() < amount) return "Error: user balance is less then product price";
+        else{
+            user.setBalance(user.getBalance() - amount);
+            merchantStock.setStock(merchantStock.getStock()-1);
+            userService.updateUser(user.getId(),user);
+            updateMerchantStock(merchantStock.getId(),merchantStock);
+            return "success";
+        }
+    }
+
     public String userReturnOrder(String userId,String productId , String merchantId){
 
         MerchantStock merchantStock = getMerchantStockById(productId,merchantId);
@@ -152,6 +178,7 @@ public class MerchantStockService {
         else{
             user.setBalance(user.getBalance() + product.getPrice());
             merchantStock.setStock(merchantStock.getStock()+1);
+            userService.updateUser(user.getId(),user);
             updateMerchantStock(merchantStock.getId(),merchantStock);
             return "success";
         }

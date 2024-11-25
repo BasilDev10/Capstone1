@@ -30,7 +30,7 @@ public class ProductController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity updateProduct(@PathVariable String id , Product product , Errors errors){
+    public ResponseEntity updateProduct(@PathVariable String id ,@RequestBody @Valid  Product product , Errors errors){
         if(errors.hasErrors()) return ResponseEntity.status(400).body(new ApiResponse(errors.getFieldError().getDefaultMessage()));
 
 

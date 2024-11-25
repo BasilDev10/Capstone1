@@ -87,7 +87,13 @@ public class MerchantStockController {
         return ResponseEntity.ok(merchantStockService.suggestionProductByMerchant(merchantId));
     }
     //Extra endpoint 4
-    // When user purchase product and applaying coupon check currect make discount for price
+    //When user purchase product and first check product is allowed coupon and applying coupon check is it correct and make discount for price
+    @PutMapping("/user-buy-product/{userId}/{productId}/{merchantId}/{coupon}")
+    public ResponseEntity userByProduct(@PathVariable String userId , @PathVariable String productId ,@PathVariable String merchantId , @PathVariable String coupon){
+        String result = merchantStockService.userBuyProduct(userId,productId,merchantId , coupon);
+        if(result.equalsIgnoreCase("success")) return ResponseEntity.status(200).body(new ApiResponse(result));
+        else return ResponseEntity.status(400).body(new ApiResponse(result));
+    }
 
 
 
