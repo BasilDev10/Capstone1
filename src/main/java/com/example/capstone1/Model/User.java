@@ -5,6 +5,9 @@ import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.Map;
+
 @Data
 @AllArgsConstructor
 
@@ -28,4 +31,7 @@ public class User {
     @NotNull(message = "Error: balance is null")
     @PositiveOrZero(message = "Error: balance must be positive or zero")
     private double balance;
+
+    private ArrayList<Map<String, Object>> transferRequests = new ArrayList<>();
+
 }

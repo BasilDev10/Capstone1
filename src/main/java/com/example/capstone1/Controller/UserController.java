@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/v1/user")
 @RequiredArgsConstructor
@@ -45,12 +47,22 @@ public class UserController {
         if(userService.deleteUser(id)) return ResponseEntity.ok(new ApiResponse("user is deleted"));
         else return ResponseEntity.status(400).body(new ApiResponse("user not found"));
     }
-    // Extra 5 endpoint
-    // admin transfer a specified balance from one user to another
-    @PutMapping("/transfer-balance/{adminId}/{userIdFrom}/{userIdTo}/{amount}")
-    public ResponseEntity transferBalance(@PathVariable String adminId, @PathVariable String userIdFrom , @PathVariable String userIdTo , @PathVariable int amount){
-        String result = userService.transferBalance(adminId,userIdFrom,userIdTo,amount);
+    // Extra endpoint 5
+    //This endpoint allows a user to initiate a transfer request to another user, specifying the amount, reason, and other transfer details.
+    @PutMapping("/request-transfer-amount")
+    public ResponseEntity requestTransferAmount(@RequestBody Map<String, Object> transferRequest){
+        String result = userService.requestTransfer(transferRequest);
         if (result.equalsIgnoreCase("success")) return ResponseEntity.ok(new ApiResponse(result));
         else return ResponseEntity.status(400).body(new ApiResponse(result));
     }
+    // Extra endpoint 6
+    //This endpoint allows an admin to update the status of a transfer request made by a user. The request can either be approved or rejected based on the admin's action.
+    @PutMapping("/update-request-status/{adminId}/{userIdFrom}/{status}/{requestId}")
+    public ResponseEntity updateRequestStatus(@PathVariable String adminId ,@PathVariable String userIdFrom,@PathVariable String status,@PathVariable String requestId){
+        String result = userService.updateRequestStatus(adminId,userIdFrom,status,requestId);
+        if (result.equalsIgnoreCase("success")) return ResponseEntity.ok(new ApiResponse(result));
+        else return ResponseEntity.status(400).body(new ApiResponse(result));
+    }
+
+
 }
